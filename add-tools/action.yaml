@@ -1,0 +1,101 @@
+name: 'Add Tools'
+description: 'Install additional tools on top of BaseImages containers'
+author: 'Zach Handley'
+
+inputs:
+  apt:
+    description: 'Space-separated list of apt packages to install'
+    required: false
+    default: ''
+  npm:
+    description: 'Space-separated list of npm packages to install globally'
+    required: false
+    default: ''
+  cargo:
+    description: 'Space-separated list of cargo packages to install'
+    required: false
+    default: ''
+  pip:
+    description: 'Space-separated list of pip packages to install'
+    required: false
+    default: ''
+  go:
+    description: 'Space-separated list of go packages to install'
+    required: false
+    default: ''
+  dotnet:
+    description: 'Space-separated list of dotnet tools to install globally'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install apt packages
+      if: inputs.apt != ''
+      shell: bash
+      run: |
+        echo "::group::Installing apt packages: ${{ inputs.apt }}"
+        sudo apt-get update
+        sudo apt-get install -y ${{ inputs.apt }}
+        echo "::endgroup::"
+
+    - name: Install npm packages
+      if: inputs.npm != ''
+      shell: bash
+      run: |
+        echo "::group::Installing npm packages: ${{ inputs.npm }}"
+        npm install -g ${{ inputs.npm }}
+        echo "::endgroup::"
+
+    - name: Install cargo packages
+      if: inputs.cargo != ''
+      shell: bash
+      run: |
+        echo "::group::Installing cargo packages: ${{ inputs.cargo }}"
+        # Use cargo-binstall if available, otherwise cargo install
+        if command -v cargo-binstall &> /dev/null; then
+          cargo binstall -y ${{ inputs.cargo }}
+        else
+          for pkg in ${{ inputs.cargo }}; do
+            cargo install "$pkg"
+          done
+        fi
+        echo "::endgroup::"
+
+    - name: Install pip packages
+      if: inputs.pip != ''
+      shell: bash
+      run: |
+        echo "::group::Installing pip packages: ${{ inputs.pip }}"
+        # Use uv if available, otherwise pip
+        if command -v uv &> /dev/null; then
+          uv pip install --system ${{ inputs.pip }}
+        else
+          pip install ${{ inputs.pip }}
+        fi
+        echo "::endgroup::"
+
+    - name: Install go packages
+      if: inputs.go != ''
+      shell: bash
+      run: |
+        echo "::group::Installing go packages: ${{ inputs.go }}"
+        for pkg in ${{ inputs.go }}; do
+          go install "$pkg"
+        done
+        echo "::endgroup::"
+
+    - name: Install dotnet tools
+      if: inputs.dotnet != ''
+      shell: bash
+      run: |
+        echo "::group::Installing dotnet tools: ${{ inputs.dotnet }}"
+        for tool in ${{ inputs.dotnet }}; do
+          dotnet tool install -g "$tool" || true
+        done
+        echo "::endgroup::"
+
+branding:
+  icon: 'package'
+  color: 'blue'

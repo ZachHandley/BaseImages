@@ -1,35 +1,30 @@
 #!/bin/bash
 set -e
 
-# Install Python 3 with common tools
-# Uses system Python with pip and uv
+# Install additional Python tools beyond what's in base
+# Base already has: python3, pip, venv, pipx, uv
 
-echo "=== Installing Python ==="
+echo "=== Installing Python extras ==="
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Install Python and pip
+# Install Python dev headers (needed for building native extensions)
 apt-get update
 apt-get install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    python3-venv \
-    python3-dev
+    python3-dev \
+    python3-setuptools \
+    python3-wheel
 
-# Upgrade pip
-python3 -m pip install --upgrade pip
+# Install poetry via pipx (isolated install)
+pipx install poetry
 
-# Install uv (fast Python package installer)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Add uv to PATH for verification
-export PATH="$HOME/.cargo/bin:$PATH"
-
-# Install common Python tools
-python3 -m pip install --no-cache-dir \
-    pipx \
+# Install common dev tools via uv (fast!)
+uv pip install --system \
     virtualenv \
-    poetry
+    black \
+    ruff \
+    mypy \
+    pytest
 
 # Clean up
 apt-get clean
@@ -38,5 +33,7 @@ rm -rf /var/lib/apt/lists/*
 # Verify installation
 echo "Python version: $(python3 --version)"
 echo "pip version: $(pip3 --version)"
+echo "uv version: $(uv --version)"
+echo "poetry version: $(poetry --version)"
 
-echo "=== Python installed ==="
+echo "=== Python extras installed ==="

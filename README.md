@@ -6,11 +6,18 @@ Custom CI/CD base images built on Ubuntu 22.04, published to GitHub Container Re
 
 | Profile | Image | Description |
 |---------|-------|-------------|
-| `base` | `ghcr.io/zachhandley/baseimages/base` | Ubuntu 22.04 + sudo, git, curl, build-essential |
+| `base` | `ghcr.io/zachhandley/baseimages/base` | Ubuntu 22.04 + build tools, LLVM, Python 3, uv, db clients |
 | `node` | `ghcr.io/zachhandley/baseimages/node` | base + Node.js 22 LTS, pnpm, yarn |
-| `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable, cargo-binstall, common tools |
+| `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable, cargo-binstall |
+| `python` | `ghcr.io/zachhandley/baseimages/python` | base + poetry, black, ruff, mypy, pytest |
+| `go` | `ghcr.io/zachhandley/baseimages/go` | base + Go 1.23 |
 | `node-rust` | `ghcr.io/zachhandley/baseimages/node-rust` | base + Node.js + Rust |
-| `ci-full` | `ghcr.io/zachhandley/baseimages/ci-full` | base + Node.js + Rust + Python + Go |
+| `dotnet` | `ghcr.io/zachhandley/baseimages/dotnet` | base + .NET 8 SDK |
+| `node-dotnet` | `ghcr.io/zachhandley/baseimages/node-dotnet` | base + Node.js + .NET 8 |
+| `cpp` | `ghcr.io/zachhandley/baseimages/cpp` | base + GCC, Clang, CMake, Ninja |
+| `java` | `ghcr.io/zachhandley/baseimages/java` | base + OpenJDK 21, Maven, Gradle |
+| `ci-full` | `ghcr.io/zachhandley/baseimages/ci-full` | base + Node + Rust + Python + Go |
+| `db-clients` | `ghcr.io/zachhandley/baseimages/db-clients` | base + MongoDB shell |
 
 ## Usage
 
@@ -26,13 +33,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: node --version
       - run: cargo --version
-```
-
-### Docker
-
-```bash
-docker pull ghcr.io/zachhandley/baseimages/node:latest
-docker run -it ghcr.io/zachhandley/baseimages/node:latest
 ```
 
 ### Forgejo/Gitea Actions
@@ -52,6 +52,36 @@ jobs:
           go version
 ```
 
+### Docker
+
+```bash
+docker pull ghcr.io/zachhandley/baseimages/node:latest
+docker run -it ghcr.io/zachhandley/baseimages/node:latest
+```
+
+## Add-Tools Action
+
+Need additional packages? Use the `add-tools` action:
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/zachhandley/baseimages/node-rust:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ZachHandley/BaseImages/add-tools@main
+        with:
+          apt: libfoo-dev libbar-dev    # apt packages
+          npm: typescript eslint         # npm global packages
+          cargo: cargo-watch tokei       # cargo packages
+          pip: httpie pytest             # pip packages
+          go: golang.org/x/tools/gopls@latest  # go packages
+          dotnet: dotnet-ef              # dotnet global tools
+```
+
 ## Image Tags
 
 Each image is tagged with:
@@ -61,12 +91,16 @@ Each image is tagged with:
 
 ## What's Included
 
-### Base Image
+### Base Image (all profiles include this)
 - Ubuntu 22.04 LTS
 - `sudo`, `git`, `git-lfs`, `curl`, `wget`
-- `ca-certificates`, `gnupg`
-- `build-essential`, `pkg-config`, `libssl-dev`
-- `jq`, `unzip`, `zip`, `xz-utils`
+- `ca-certificates`, `gnupg`, `lsb-release`
+- **Build tools**: `build-essential`, `pkg-config`, `cmake`, `ninja-build`, `autoconf`, `automake`, `libtool`
+- **LLVM toolchain**: `llvm`, `lld`, `clang`, `libclang-dev` (fast linking, bindgen support)
+- **Libraries**: `libssl-dev`, `libsqlite3-dev`, `libffi-dev`, `libreadline-dev`, `libncurses-dev`, `libxml2-dev`, `libyaml-dev`
+- **Python**: `python3`, `python3-pip`, `python3-venv`, `pipx`, `uv` (astral)
+- **Utilities**: `jq`, `unzip`, `zip`, `xz-utils`, `zstd`
+- **DB clients**: `postgresql-client`, `redis-tools`
 - Non-root `runner` user with passwordless sudo
 
 ### Node Profile
@@ -78,16 +112,37 @@ Base image plus:
 Base image plus:
 - Rust stable (via rustup)
 - rustfmt, clippy
-- cargo-binstall, cargo-watch, cargo-edit, cargo-audit
+- cargo-binstall
 
-### Node-Rust Profile
-Combination of Node and Rust profiles.
+### .NET Profile
+Base image plus:
+- .NET 8 SDK (LTS)
+- dotnet CLI tools support
+
+### C++ Profile
+Base image plus:
+- GCC, G++, GDB
+- Clang, clang-format, clang-tidy
+- CMake, Ninja, Meson
+- ccache
+
+### Java Profile
+Base image plus:
+- OpenJDK 21 (LTS)
+- Maven
+- Gradle 8.x
+
+### Python Profile
+Base image plus:
+- `python3-dev` (for native extensions)
+- Poetry (via pipx)
+- Dev tools: black, ruff, mypy, pytest
 
 ### CI-Full Profile
 All tools:
 - Node.js 22 LTS
 - Rust stable
-- Python 3 with pip, uv, poetry
+- Python 3 with poetry, black, ruff, mypy
 - Go 1.23
 
 ## Architecture Support

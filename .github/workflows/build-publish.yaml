@@ -20,6 +20,8 @@ on:
           - base
           - node
           - rust
+          - python
+          - go
           - node-rust
           - ci-full
           - dotnet
@@ -45,7 +47,7 @@ jobs:
           if [[ "${{ github.event.inputs.profile }}" != "" ]]; then
             echo 'matrix={"profile":["${{ github.event.inputs.profile }}"]}' >> $GITHUB_OUTPUT
           else
-            echo 'matrix={"profile":["base","node","rust","node-rust","ci-full","dotnet","cpp","java","node-dotnet","db-clients"]}' >> $GITHUB_OUTPUT
+            echo 'matrix={"profile":["base","node","rust","python","go","node-rust","ci-full","dotnet","cpp","java","node-dotnet","db-clients"]}' >> $GITHUB_OUTPUT
           fi
 
   build:
@@ -129,6 +131,8 @@ jobs:
           echo "| base | \`ghcr.io/zachhandley/baseimages/base\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| node | \`ghcr.io/zachhandley/baseimages/node\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| rust | \`ghcr.io/zachhandley/baseimages/rust\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| python | \`ghcr.io/zachhandley/baseimages/python\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| go | \`ghcr.io/zachhandley/baseimages/go\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| node-rust | \`ghcr.io/zachhandley/baseimages/node-rust\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| ci-full | \`ghcr.io/zachhandley/baseimages/ci-full\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| dotnet | \`ghcr.io/zachhandley/baseimages/dotnet\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
