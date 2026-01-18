@@ -1,0 +1,20 @@
+# Git
+.git
+.gitignore
+
+# GitHub
+.github
+
+# Documentation
+*.md
+LICENSE
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Other profiles (each profile builds with its own Dockerfile)
+# We need scripts/ but not other profiles during build
