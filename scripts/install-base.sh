@@ -27,7 +27,6 @@ apt-get install -y --no-install-recommends \
     zip \
     xz-utils \
     zstd \
-    # Build essentials
     build-essential \
     pkg-config \
     cmake \
@@ -35,12 +34,10 @@ apt-get install -y --no-install-recommends \
     autoconf \
     automake \
     libtool \
-    # LLVM toolchain (used by Rust, Flutter, C++)
     llvm \
     lld \
     clang \
     libclang-dev \
-    # Common libraries
     libssl-dev \
     libsqlite3-dev \
     libffi-dev \
@@ -48,12 +45,10 @@ apt-get install -y --no-install-recommends \
     libncurses-dev \
     libxml2-dev \
     libyaml-dev \
-    # Python (needed by many build scripts)
     python3 \
     python3-pip \
     python3-venv \
     pipx \
-    # DB clients
     postgresql-client \
     redis-tools
 
@@ -63,7 +58,6 @@ locale-gen en_US.UTF-8
 # Install astral uv (fast Python package manager)
 echo "Installing astral uv..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
-# Make uv available system-wide
 cp /root/.local/bin/uv /usr/local/bin/uv
 cp /root/.local/bin/uvx /usr/local/bin/uvx
 
