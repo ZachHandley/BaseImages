@@ -23,14 +23,12 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 
 # Copy install scripts
 COPY scripts/install-base.sh /tmp/scripts/
-COPY scripts/install-node.sh /tmp/scripts/
 COPY scripts/install-dotnet.sh /tmp/scripts/
 COPY scripts/setup-user.sh /tmp/scripts/
 
-# Run installation
+# Run installation (node is included in install-base.sh)
 RUN chmod +x /tmp/scripts/*.sh && \
     /tmp/scripts/install-base.sh && \
-    /tmp/scripts/install-node.sh && \
     /tmp/scripts/install-dotnet.sh && \
     /tmp/scripts/setup-user.sh && \
     rm -rf /tmp/scripts

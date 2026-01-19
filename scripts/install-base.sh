@@ -55,6 +55,18 @@ apt-get install -y --no-install-recommends \
 # Generate locales
 locale-gen en_US.UTF-8
 
+# Install Node.js LTS (needed for many CI workflows)
+echo "Installing Node.js LTS..."
+NODE_MAJOR="${NODE_MAJOR:-22}"
+curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash -
+apt-get install -y nodejs
+
+# Install pnpm, yarn, and bun globally
+npm install -g pnpm yarn
+curl -fsSL https://bun.sh/install | bash
+cp /root/.bun/bin/bun /usr/local/bin/bun
+cp /root/.bun/bin/bunx /usr/local/bin/bunx
+
 # Install astral uv (fast Python package manager)
 echo "Installing astral uv..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -66,4 +78,8 @@ apt-get clean
 rm -rf /var/lib/apt/lists/*
 
 echo "=== Base prerequisites installed ==="
+echo "Node.js version: $(node --version)"
+echo "npm version: $(npm --version)"
+echo "pnpm version: $(pnpm --version)"
+echo "bun version: $(bun --version)"
 echo "uv version: $(uv --version)"

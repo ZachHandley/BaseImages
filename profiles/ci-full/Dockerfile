@@ -23,16 +23,14 @@ ENV PATH=/usr/local/cargo/bin:/usr/local/go/bin:$PATH
 
 # Copy install scripts
 COPY scripts/install-base.sh /tmp/scripts/
-COPY scripts/install-node.sh /tmp/scripts/
 COPY scripts/install-rust.sh /tmp/scripts/
 COPY scripts/install-python.sh /tmp/scripts/
 COPY scripts/install-go.sh /tmp/scripts/
 COPY scripts/setup-user.sh /tmp/scripts/
 
-# Run installation
+# Run installation (node is included in install-base.sh)
 RUN chmod +x /tmp/scripts/*.sh && \
     /tmp/scripts/install-base.sh && \
-    /tmp/scripts/install-node.sh && \
     /tmp/scripts/install-rust.sh && \
     /tmp/scripts/install-python.sh && \
     /tmp/scripts/install-go.sh && \
