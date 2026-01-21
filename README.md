@@ -9,6 +9,7 @@ Custom CI/CD base images built on Ubuntu 22.04, published to GitHub Container Re
 | `base` | `ghcr.io/zachhandley/baseimages/base` | Ubuntu 22.04 + build tools, LLVM, Python 3, uv, db clients |
 | `node` | `ghcr.io/zachhandley/baseimages/node` | base + Node.js 22 LTS, pnpm, yarn |
 | `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable, cargo-binstall |
+| `ruby` | `ghcr.io.zachhandley/baseimages/ruby` | base + Ruby 3.3, rbenv, bundler, ruby-lsp |
 | `python` | `ghcr.io/zachhandley/baseimages/python` | base + poetry, black, ruff, mypy, pytest |
 | `go` | `ghcr.io/zachhandley/baseimages/go` | base + Go 1.23 |
 | `node-rust` | `ghcr.io/zachhandley/baseimages/node-rust` | base + Node.js + Rust |
@@ -137,6 +138,13 @@ Base image plus:
 - `python3-dev` (for native extensions)
 - Poetry (via pipx)
 - Dev tools: black, ruff, mypy, pytest
+
+### Ruby Profile
+Base image plus:
+- Ruby 3.3 (via rbenv)
+- rbenv for version management
+- Bundler and rake
+- Dev tools: rspec, rubocop, pry, solargraph, ruby-lsp
 
 ### CI-Full Profile
 All tools:
