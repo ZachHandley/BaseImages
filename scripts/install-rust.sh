@@ -6,6 +6,8 @@ set -e
 
 echo "=== Installing Rust stable ==="
 
+INSTALL_CARGO_TOOLS="${INSTALL_CARGO_TOOLS:-1}"
+
 if command -v apt-get >/dev/null 2>&1; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
@@ -13,23 +15,27 @@ if command -v apt-get >/dev/null 2>&1; then
         rustc \
         cargo \
         rustfmt \
-        clippy \
-        cargo-edit \
-        cargo-watch \
-        cargo-audit
+        rust-clippy
     apt-get clean
     rm -rf /var/lib/apt/lists/*
+    if [ "$INSTALL_CARGO_TOOLS" = "1" ]; then
+        cargo install --locked cargo-edit cargo-watch cargo-audit
+    fi
 elif command -v apk >/dev/null 2>&1; then
     apk update
     apk add --no-cache \
         rust \
-        cargo \
-        rustfmt \
-        clippy \
-        cargo-edit \
-        cargo-watch \
-        cargo-audit
+        cargo
+    if apk search -q -e rustfmt >/dev/null 2>&1; then
+        apk add --no-cache rustfmt
+    fi
+    if apk search -q -e clippy >/dev/null 2>&1; then
+        apk add --no-cache clippy
+    fi
     rm -rf /var/cache/apk/*
+    if [ "$INSTALL_CARGO_TOOLS" = "1" ]; then
+        cargo install --locked cargo-edit cargo-watch cargo-audit
+    fi
 else
     export RUSTUP_HOME="${RUSTUP_HOME:-/usr/local/rustup}"
     export CARGO_HOME="${CARGO_HOME:-/usr/local/cargo}"

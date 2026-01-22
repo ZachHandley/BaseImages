@@ -10,7 +10,7 @@ Custom CI/CD base images built on Ubuntu 22.04 and Alpine Linux, published to Gi
 | `alpine` | `ghcr.io/zachhandley/baseimages/alpine` | Alpine Linux + build tools, Node.js 22, Bun, Python 3, uv, db clients |
 | `bun-ubuntu` | `ghcr.io/zachhandley/baseimages/bun-ubuntu` | base + Bun |
 | `bun-alpine` | `ghcr.io/zachhandley/baseimages/bun-alpine` | alpine + Bun |
-| `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable, cargo-binstall |
+| `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable |
 | `ruby` | `ghcr.io/zachhandley/baseimages/ruby` | base + Ruby 3.3, rbenv, bundler, ruby-lsp |
 | `python` | `ghcr.io/zachhandley/baseimages/python` | base + poetry, black, ruff, mypy, pytest |
 | `go` | `ghcr.io/zachhandley/baseimages/go` | base + Go 1.23 |
@@ -26,7 +26,7 @@ Custom CI/CD base images built on Ubuntu 22.04 and Alpine Linux, published to Gi
 | `go-alpine` | `ghcr.io/zachhandley/baseimages/go-alpine` | alpine + Go 1.23 |
 | `python-alpine` | `ghcr.io/zachhandley/baseimages/python-alpine` | alpine + poetry, black, ruff, mypy, pytest |
 | `ruby-alpine` | `ghcr.io/zachhandley/baseimages/ruby-alpine` | alpine + Ruby 3.3, rbenv, bundler, ruby-lsp |
-| `rust-alpine` | `ghcr.io/zachhandley/baseimages/rust-alpine` | alpine + Rust stable, cargo-binstall |
+| `rust-alpine` | `ghcr.io/zachhandley/baseimages/rust-alpine` | alpine + Rust stable |
 
 ## Usage
 
@@ -147,9 +147,8 @@ Alpine Linux plus:
 
 ### Rust Profile
 Base image plus:
-- Rust stable (via rustup)
+- Rust stable (via system packages)
 - rustfmt, clippy
-- cargo-binstall
 
 ### .NET Profile
 Base image plus:
@@ -195,7 +194,7 @@ Base image plus:
 
 ### Rust + uv Profile
 Base image plus:
-- Rust stable (via rustup)
+- Rust stable (via system packages)
 - `python3-dev` and `maturin` for pyo3 builds
 
 ### Flutter Profile
@@ -204,7 +203,7 @@ Base image plus:
 
 ### Rust + uv + Flutter Profile
 Base image plus:
-- Rust stable (via rustup)
+- Rust stable (via system packages)
 - `python3-dev` and `maturin`
 - Flutter SDK (stable)
 - Flet CLI

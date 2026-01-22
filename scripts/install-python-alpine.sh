@@ -15,16 +15,19 @@ apk add --no-cache \
     py3-setuptools \
     py3-wheel
 
-# Install poetry via pipx (isolated install)
-pipx install poetry
-
-# Install common dev tools via uv (fast!)
-uv pip install --system \
-    virtualenv \
+# Install common dev tools via uv in a dedicated venv
+uv venv /opt/py-tools
+uv pip install --python /opt/py-tools/bin/python \
+    poetry \
     black \
     ruff \
     mypy \
     pytest
+
+# Make tools available system-wide
+for tool in poetry black ruff mypy pytest; do
+    ln -sf /opt/py-tools/bin/$tool /usr/local/bin/$tool
+done
 
 # Clean up
 rm -rf /var/cache/apk/*

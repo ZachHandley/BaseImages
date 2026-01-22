@@ -12,7 +12,7 @@ RUBY_VERSION="${RUBY_VERSION:-3.3.0}"
 echo "==> Installing Ruby dependencies..."
 apk update
 apk add --no-cache \
-    libssl-dev \
+    openssl-dev \
     readline-dev \
     zlib-dev \
     libffi-dev \
