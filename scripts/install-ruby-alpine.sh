@@ -10,12 +10,11 @@ apk update
 apk add --no-cache \
     ruby \
     ruby-dev \
-    ruby-bundler \
-    ruby-rake \
-    ruby-irb \
-    ruby-json \
-    ruby-bigdecimal \
-    git
+    git \
+    build-base \
+    yaml-dev \
+    openssl-dev \
+    readline-dev
 
 echo "==> Installing common gems..."
 gem install rspec rubocop pry solargraph ruby-lsp
