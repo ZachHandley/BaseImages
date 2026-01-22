@@ -29,7 +29,8 @@ apk add --no-cache \
     unzip \
     zip \
     xz \
-    zstd
+    zstd \
+    sudo
 
 # Install LLVM/Clang toolchain
 apk add --no-cache \
@@ -67,6 +68,9 @@ pip3 install --break-system-packages uv
 apk add --no-cache \
     postgresql-client \
     redis
+
+# Ensure sudoers directory exists before adding entries
+mkdir -p /etc/sudoers.d
 
 # Create runner user (non-root)
 adduser -D -s /bin/bash runner

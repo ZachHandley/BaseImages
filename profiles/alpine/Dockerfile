@@ -16,12 +16,10 @@ ENV TZ=UTC
 
 # Copy install scripts
 COPY scripts/install-base-alpine.sh /tmp/scripts/
-COPY scripts/setup-user.sh /tmp/scripts/
 
 # Run installation
 RUN chmod +x /tmp/scripts/*.sh && \
     /tmp/scripts/install-base-alpine.sh && \
-    /tmp/scripts/setup-user.sh && \
     rm -rf /tmp/scripts
 
 # Set the working directory

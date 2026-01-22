@@ -24,7 +24,7 @@ Custom CI/CD base images built on Ubuntu 22.04 and Alpine Linux, published to Gi
 | `cpp` | `ghcr.io/zachhandley/baseimages/cpp` | base + GCC, Clang, CMake, Ninja |
 | `java` | `ghcr.io/zachhandley/baseimages/java` | base + OpenJDK 21, Maven, Gradle |
 | `ci-full` | `ghcr.io/zachhandley/baseimages/ci-full` | base + Node + Rust + Python + Go |
-| `db-clients` | `ghcr.io/zachhandley/baseimages/db-clients` | base + MongoDB shell |
+| `db-clients` | `ghcr.io/zachhandley/baseimages/db-clients` | base + PostgreSQL, MySQL/MariaDB, Redis, SQLite, MongoDB shell |
 
 ## Usage
 
@@ -120,7 +120,7 @@ Each image is tagged with:
 
 ## What's Included
 
-### Base Image (all profiles include this)
+### Ubuntu Base Image (Ubuntu profiles)
 - Ubuntu 22.04 LTS
 - `sudo`, `git`, `git-lfs`, `curl`, `wget`
 - `ca-certificates`, `gnupg`, `lsb-release`
