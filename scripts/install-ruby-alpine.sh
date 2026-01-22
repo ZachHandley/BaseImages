@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 # Install Ruby via rbenv on Alpine
@@ -29,13 +29,13 @@ git clone https://github.com/rbenv/ruby-build.git /opt/rbenv/plugins/ruby-build
 cat > /etc/profile.d/rbenv.sh << 'EOF'
 export RBENV_ROOT=/opt/rbenv
 export PATH="$RBENV_ROOT/bin:$PATH"
-eval "$(rbenv init - bash)"
+eval "$(rbenv init - sh)"
 EOF
 
 # Source rbenv for current session
 export RBENV_ROOT=/opt/rbenv
 export PATH="$RBENV_ROOT/bin:$PATH"
-eval "$(rbenv init - bash)"
+eval "$(rbenv init - sh)"
 
 echo "==> Installing Ruby ${RUBY_VERSION}..."
 rbenv install "${RUBY_VERSION}"
