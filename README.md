@@ -1,15 +1,21 @@
 # BaseImages
 
-Custom CI/CD base images built on Ubuntu 22.04, published to GitHub Container Registry.
+Custom CI/CD base images built on Ubuntu 22.04 and Alpine Linux, published to GitHub Container Registry.
 
 ## Available Images
 
 | Profile | Image | Description |
 |---------|-------|-------------|
 | `base` | `ghcr.io/zachhandley/baseimages/base` | Ubuntu 22.04 + build tools, LLVM, Python 3, uv, db clients |
+| `alpine` | `ghcr.io/zachhandley/baseimages/alpine` | Alpine Linux + build tools, Python 3, uv, db clients |
+| `go-alpine` | `ghcr.io/zachhandley/baseimages/go-alpine` | alpine + Go 1.23 |
+| `node-alpine` | `ghcr.io/zachhandley/baseimages/node-alpine` | alpine + Node.js 22 LTS, pnpm, yarn |
+| `python-alpine` | `ghcr.io/zachhandley/baseimages/python-alpine` | alpine + poetry, black, ruff, mypy, pytest |
+| `ruby-alpine` | `ghcr.io/zachhandley/baseimages/ruby-alpine` | alpine + Ruby 3.3, rbenv, bundler, ruby-lsp |
+| `rust-alpine` | `ghcr.io/zachhandley/baseimages/rust-alpine` | alpine + Rust stable, cargo-binstall |
 | `node` | `ghcr.io/zachhandley/baseimages/node` | base + Node.js 22 LTS, pnpm, yarn |
 | `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable, cargo-binstall |
-| `ruby` | `ghcr.io.zachhandley/baseimages/ruby` | base + Ruby 3.3, rbenv, bundler, ruby-lsp |
+| `ruby` | `ghcr.io/zachhandley/baseimages/ruby` | base + Ruby 3.3, rbenv, bundler, ruby-lsp |
 | `python` | `ghcr.io/zachhandley/baseimages/python` | base + poetry, black, ruff, mypy, pytest |
 | `go` | `ghcr.io/zachhandley/baseimages/go` | base + Go 1.23 |
 | `node-rust` | `ghcr.io/zachhandley/baseimages/node-rust` | base + Node.js + Rust |
@@ -60,6 +66,27 @@ docker pull ghcr.io/zachhandley/baseimages/node:latest
 docker run -it ghcr.io/zachhandley/baseimages/node:latest
 ```
 
+### Alpine Variants
+
+Alpine-based images are smaller and use the `apk` package manager:
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/zachhandley/baseimages/go-alpine:latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: go version
+      - run: apk list  # View installed packages
+```
+
+```bash
+docker pull ghcr.io/zachhandley/baseimages/node-alpine:latest
+docker run -it ghcr.io/zachhandley/baseimages/node-alpine:latest
+```
+
 ## Add-Tools Action
 
 Need additional packages? Use the `add-tools` action:
@@ -75,12 +102,13 @@ jobs:
 
       - uses: ZachHandley/BaseImages/add-tools@main
         with:
-          apt: libfoo-dev libbar-dev    # apt packages
-          npm: typescript eslint         # npm global packages
-          cargo: cargo-watch tokei       # cargo packages
-          pip: httpie pytest             # pip packages
+          apt: libfoo-dev libbar-dev    # apt packages (Ubuntu-based images)
+          apk: libfoo-dev               # apk packages (Alpine-based images)
+          npm: typescript eslint        # npm global packages
+          cargo: cargo-watch tokei      # cargo packages
+          pip: httpie pytest            # pip packages
           go: golang.org/x/tools/gopls@latest  # go packages
-          dotnet: dotnet-ef              # dotnet global tools
+          dotnet: dotnet-ef             # dotnet global tools
 ```
 
 ## Image Tags
@@ -103,6 +131,15 @@ Each image is tagged with:
 - **Utilities**: `jq`, `unzip`, `zip`, `xz-utils`, `zstd`
 - **DB clients**: `postgresql-client`, `redis-tools`
 - Non-root `runner` user with passwordless sudo
+
+### Alpine Profile
+Alpine Linux plus:
+- Same tool categories as Ubuntu base (build tools, Python, DB clients)
+- Uses `apk` package manager
+- Smaller image size
+- Better for minimal containers
+
+**Alpine variants** are available for Go, Node.js, Python, Ruby, and Rust (e.g., `go-alpine`, `node-alpine`, `python-alpine`, `ruby-alpine`, `rust-alpine`). These provide the same language tooling as their Ubuntu-based counterparts but with significantly smaller image sizes.
 
 ### Node Profile
 Base image plus:
