@@ -13,6 +13,7 @@ LABEL maintainer="Zach Handley <zachhandley@gmail.com>"
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
+ENV INSTALL_CARGO_TOOLS=0
 
 # Copy install scripts
 COPY scripts/install-rust.sh /tmp/scripts/

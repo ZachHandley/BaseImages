@@ -31,7 +31,6 @@ on:
           - rust-uv
           - flutter
           - rust-uv-flutter
-          - flet
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -54,7 +53,7 @@ jobs:
           if [[ "${{ github.event.inputs.profile }}" != "" && "${{ github.event.inputs.profile }}" != "base" ]]; then
             echo 'matrix={"profile":["${{ github.event.inputs.profile }}"]}' >> $GITHUB_OUTPUT
           else
-            echo 'matrix={"profile":["rust","ruby","python","go","ci-full","dotnet","cpp","java","db-clients","bun-ubuntu","rust-uv","flutter","rust-uv-flutter","flet"]}' >> $GITHUB_OUTPUT
+            echo 'matrix={"profile":["rust","ruby","python","go","ci-full","dotnet","cpp","java","db-clients","bun-ubuntu","rust-uv","flutter","rust-uv-flutter"]}' >> $GITHUB_OUTPUT
           fi
 
   build_base:
@@ -217,7 +216,6 @@ jobs:
           echo "| rust-uv | \`ghcr.io/zachhandley/baseimages/rust-uv\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| flutter | \`ghcr.io/zachhandley/baseimages/flutter\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| rust-uv-flutter | \`ghcr.io/zachhandley/baseimages/rust-uv-flutter\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| flet | \`ghcr.io/zachhandley/baseimages/flet\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Usage" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

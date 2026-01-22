@@ -9,6 +9,8 @@ LABEL org.opencontainers.image.description="Full CI image with Node.js, Rust, Py
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL maintainer="Zach Handley <zachhandley@gmail.com>"
 
+ENV INSTALL_CARGO_TOOLS=0
+
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=en_US.UTF-8

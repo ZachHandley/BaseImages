@@ -9,6 +9,8 @@ LABEL org.opencontainers.image.description="Ubuntu image with Rust and uv for Py
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL maintainer="Zach Handley <zachhandley@gmail.com>"
 
+ENV INSTALL_CARGO_TOOLS=0
+
 # Copy install scripts
 COPY scripts/install-rust.sh /tmp/scripts/
 COPY scripts/install-python-dev.sh /tmp/scripts/

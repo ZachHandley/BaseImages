@@ -6,7 +6,7 @@ set -e
 
 echo "=== Installing Rust stable ==="
 
-INSTALL_CARGO_TOOLS="${INSTALL_CARGO_TOOLS:-1}"
+INSTALL_CARGO_TOOLS="${INSTALL_CARGO_TOOLS:-0}"
 
 if command -v apt-get >/dev/null 2>&1; then
     export DEBIAN_FRONTEND=noninteractive
@@ -19,7 +19,9 @@ if command -v apt-get >/dev/null 2>&1; then
     apt-get clean
     rm -rf /var/lib/apt/lists/*
     if [ "$INSTALL_CARGO_TOOLS" = "1" ]; then
-        cargo install --locked cargo-edit cargo-watch cargo-audit
+        if ! cargo install --locked cargo-edit cargo-watch cargo-audit; then
+            echo "Warning: failed to install cargo tools; continuing."
+        fi
     fi
 elif command -v apk >/dev/null 2>&1; then
     apk update
@@ -34,7 +36,9 @@ elif command -v apk >/dev/null 2>&1; then
     fi
     rm -rf /var/cache/apk/*
     if [ "$INSTALL_CARGO_TOOLS" = "1" ]; then
-        cargo install --locked cargo-edit cargo-watch cargo-audit
+        if ! cargo install --locked cargo-edit cargo-watch cargo-audit; then
+            echo "Warning: failed to install cargo tools; continuing."
+        fi
     fi
 else
     export RUSTUP_HOME="${RUSTUP_HOME:-/usr/local/rustup}"

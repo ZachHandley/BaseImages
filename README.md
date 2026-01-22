@@ -20,12 +20,11 @@ Custom CI/CD base images built on Ubuntu 22.04 and Alpine Linux, published to Gi
 | `ci-full` | `ghcr.io/zachhandley/baseimages/ci-full` | base + Node + Rust + Python + Go |
 | `rust-uv` | `ghcr.io/zachhandley/baseimages/rust-uv` | base + Rust + Python dev headers + maturin |
 | `flutter` | `ghcr.io/zachhandley/baseimages/flutter` | base + Flutter SDK |
-| `rust-uv-flutter` | `ghcr.io/zachhandley/baseimages/rust-uv-flutter` | base + Rust + uv + Flutter + Flet |
-| `flet` | `ghcr.io/zachhandley/baseimages/flet` | base + Flet |
+| `rust-uv-flutter` | `ghcr.io/zachhandley/baseimages/rust-uv-flutter` | base + Rust + uv + Flutter |
 | `db-clients` | `ghcr.io/zachhandley/baseimages/db-clients` | base + PostgreSQL, MySQL/MariaDB, Redis, SQLite, MongoDB shell |
 | `go-alpine` | `ghcr.io/zachhandley/baseimages/go-alpine` | alpine + Go 1.23 |
 | `python-alpine` | `ghcr.io/zachhandley/baseimages/python-alpine` | alpine + poetry, black, ruff, mypy, pytest |
-| `ruby-alpine` | `ghcr.io/zachhandley/baseimages/ruby-alpine` | alpine + Ruby 3.3, rbenv, bundler, ruby-lsp |
+| `ruby-alpine` | `ghcr.io/zachhandley/baseimages/ruby-alpine` | alpine + Ruby, bundler, ruby-lsp |
 | `rust-alpine` | `ghcr.io/zachhandley/baseimages/rust-alpine` | alpine + Rust stable |
 
 ## Usage
@@ -206,11 +205,7 @@ Base image plus:
 - Rust stable (via system packages)
 - `python3-dev` and `maturin`
 - Flutter SDK (stable)
-- Flet CLI
 
-### Flet Profile
-Base image plus:
-- Flet CLI
 
 ## Architecture Support
 
