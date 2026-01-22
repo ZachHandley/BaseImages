@@ -24,6 +24,10 @@ on:
           - go-alpine
           - bun-alpine
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   REGISTRY: ghcr.io
   IMAGE_BASE: ghcr.io/zachhandley/baseimages

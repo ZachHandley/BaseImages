@@ -65,9 +65,12 @@ apk add --no-cache \
 npm install -g pnpm yarn
 
 # Install Bun
+export BUN_INSTALL=/root/.bun
 curl -fsSL https://bun.sh/install | bash
 cp /root/.bun/bin/bun /usr/local/bin/bun
-cp /root/.bun/bin/bunx /usr/local/bin/bunx
+if [ -f /root/.bun/bin/bunx ]; then
+    cp /root/.bun/bin/bunx /usr/local/bin/bunx
+fi
 
 # Install pipx if not available
 pip3 install --break-system-packages --upgrade pipx
