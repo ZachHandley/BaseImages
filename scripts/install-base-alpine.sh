@@ -46,7 +46,7 @@ apk add --no-cache \
     readline-dev \
     ncurses-dev \
     libxml2-dev \
-    libyaml-dev \
+    yaml-dev \
     libxml2-dev \
     bsd-compat-headers \
     linux-headers
