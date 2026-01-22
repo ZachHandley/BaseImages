@@ -6,25 +6,27 @@ Custom CI/CD base images built on Ubuntu 22.04 and Alpine Linux, published to Gi
 
 | Profile | Image | Description |
 |---------|-------|-------------|
-| `base` | `ghcr.io/zachhandley/baseimages/base` | Ubuntu 22.04 + build tools, LLVM, Python 3, uv, db clients |
-| `alpine` | `ghcr.io/zachhandley/baseimages/alpine` | Alpine Linux + build tools, Python 3, uv, db clients |
-| `go-alpine` | `ghcr.io/zachhandley/baseimages/go-alpine` | alpine + Go 1.23 |
-| `node-alpine` | `ghcr.io/zachhandley/baseimages/node-alpine` | alpine + Node.js 22 LTS, pnpm, yarn |
-| `python-alpine` | `ghcr.io/zachhandley/baseimages/python-alpine` | alpine + poetry, black, ruff, mypy, pytest |
-| `ruby-alpine` | `ghcr.io/zachhandley/baseimages/ruby-alpine` | alpine + Ruby 3.3, rbenv, bundler, ruby-lsp |
-| `rust-alpine` | `ghcr.io/zachhandley/baseimages/rust-alpine` | alpine + Rust stable, cargo-binstall |
-| `node` | `ghcr.io/zachhandley/baseimages/node` | base + Node.js 22 LTS, pnpm, yarn |
+| `base` | `ghcr.io/zachhandley/baseimages/base` | Ubuntu 22.04 + build tools, LLVM, Node.js 22, Bun, Python 3, uv, db clients |
+| `alpine` | `ghcr.io/zachhandley/baseimages/alpine` | Alpine Linux + build tools, Node.js 22, Bun, Python 3, uv, db clients |
+| `bun-ubuntu` | `ghcr.io/zachhandley/baseimages/bun-ubuntu` | base + Bun |
+| `bun-alpine` | `ghcr.io/zachhandley/baseimages/bun-alpine` | alpine + Bun |
 | `rust` | `ghcr.io/zachhandley/baseimages/rust` | base + Rust stable, cargo-binstall |
 | `ruby` | `ghcr.io/zachhandley/baseimages/ruby` | base + Ruby 3.3, rbenv, bundler, ruby-lsp |
 | `python` | `ghcr.io/zachhandley/baseimages/python` | base + poetry, black, ruff, mypy, pytest |
 | `go` | `ghcr.io/zachhandley/baseimages/go` | base + Go 1.23 |
-| `node-rust` | `ghcr.io/zachhandley/baseimages/node-rust` | base + Node.js + Rust |
 | `dotnet` | `ghcr.io/zachhandley/baseimages/dotnet` | base + .NET 8 SDK |
-| `node-dotnet` | `ghcr.io/zachhandley/baseimages/node-dotnet` | base + Node.js + .NET 8 |
 | `cpp` | `ghcr.io/zachhandley/baseimages/cpp` | base + GCC, Clang, CMake, Ninja |
 | `java` | `ghcr.io/zachhandley/baseimages/java` | base + OpenJDK 21, Maven, Gradle |
 | `ci-full` | `ghcr.io/zachhandley/baseimages/ci-full` | base + Node + Rust + Python + Go |
+| `rust-uv` | `ghcr.io/zachhandley/baseimages/rust-uv` | base + Rust + Python dev headers + maturin |
+| `flutter` | `ghcr.io/zachhandley/baseimages/flutter` | base + Flutter SDK |
+| `rust-uv-flutter` | `ghcr.io/zachhandley/baseimages/rust-uv-flutter` | base + Rust + uv + Flutter + Flet |
+| `flet` | `ghcr.io/zachhandley/baseimages/flet` | base + Flet |
 | `db-clients` | `ghcr.io/zachhandley/baseimages/db-clients` | base + PostgreSQL, MySQL/MariaDB, Redis, SQLite, MongoDB shell |
+| `go-alpine` | `ghcr.io/zachhandley/baseimages/go-alpine` | alpine + Go 1.23 |
+| `python-alpine` | `ghcr.io/zachhandley/baseimages/python-alpine` | alpine + poetry, black, ruff, mypy, pytest |
+| `ruby-alpine` | `ghcr.io/zachhandley/baseimages/ruby-alpine` | alpine + Ruby 3.3, rbenv, bundler, ruby-lsp |
+| `rust-alpine` | `ghcr.io/zachhandley/baseimages/rust-alpine` | alpine + Rust stable, cargo-binstall |
 
 ## Usage
 
@@ -35,7 +37,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/zachhandley/baseimages/node-rust:latest
+      image: ghcr.io/zachhandley/baseimages/ci-full:latest
     steps:
       - uses: actions/checkout@v4
       - run: node --version
@@ -62,8 +64,8 @@ jobs:
 ### Docker
 
 ```bash
-docker pull ghcr.io/zachhandley/baseimages/node:latest
-docker run -it ghcr.io/zachhandley/baseimages/node:latest
+docker pull ghcr.io/zachhandley/baseimages/base:latest
+docker run -it ghcr.io/zachhandley/baseimages/base:latest
 ```
 
 ### Alpine Variants
@@ -83,8 +85,8 @@ jobs:
 ```
 
 ```bash
-docker pull ghcr.io/zachhandley/baseimages/node-alpine:latest
-docker run -it ghcr.io/zachhandley/baseimages/node-alpine:latest
+docker pull ghcr.io/zachhandley/baseimages/alpine:latest
+docker run -it ghcr.io/zachhandley/baseimages/alpine:latest
 ```
 
 ## Add-Tools Action
@@ -96,7 +98,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/zachhandley/baseimages/node-rust:latest
+      image: ghcr.io/zachhandley/baseimages/ci-full:latest
     steps:
       - uses: actions/checkout@v4
 
@@ -128,6 +130,7 @@ Each image is tagged with:
 - **LLVM toolchain**: `llvm`, `lld`, `clang`, `libclang-dev` (fast linking, bindgen support)
 - **Libraries**: `libssl-dev`, `libsqlite3-dev`, `libffi-dev`, `libreadline-dev`, `libncurses-dev`, `libxml2-dev`, `libyaml-dev`
 - **Python**: `python3`, `python3-pip`, `python3-venv`, `pipx`, `uv` (astral)
+- **Node.js**: Node.js 22 LTS, npm, pnpm, yarn, bun
 - **Utilities**: `jq`, `unzip`, `zip`, `xz-utils`, `zstd`
 - **DB clients**: `postgresql-client`, `redis-tools`
 - Non-root `runner` user with passwordless sudo
@@ -135,16 +138,12 @@ Each image is tagged with:
 ### Alpine Profile
 Alpine Linux plus:
 - Same tool categories as Ubuntu base (build tools, Python, DB clients)
+- Node.js 22 LTS, npm, pnpm, yarn, bun
 - Uses `apk` package manager
 - Smaller image size
 - Better for minimal containers
 
-**Alpine variants** are available for Go, Node.js, Python, Ruby, and Rust (e.g., `go-alpine`, `node-alpine`, `python-alpine`, `ruby-alpine`, `rust-alpine`). These provide the same language tooling as their Ubuntu-based counterparts but with significantly smaller image sizes.
-
-### Node Profile
-Base image plus:
-- Node.js 22 LTS (via NodeSource)
-- npm, pnpm, yarn
+**Alpine variants** are available for Go, Python, Ruby, Rust, and Bun (e.g., `go-alpine`, `python-alpine`, `ruby-alpine`, `rust-alpine`, `bun-alpine`). These provide the same language tooling as their Ubuntu-based counterparts but with significantly smaller image sizes.
 
 ### Rust Profile
 Base image plus:
@@ -190,6 +189,30 @@ All tools:
 - Python 3 with poetry, black, ruff, mypy
 - Go 1.23
 
+### Bun Profile
+Base image plus:
+- Bun runtime and package manager
+
+### Rust + uv Profile
+Base image plus:
+- Rust stable (via rustup)
+- `python3-dev` and `maturin` for pyo3 builds
+
+### Flutter Profile
+Base image plus:
+- Flutter SDK (stable)
+
+### Rust + uv + Flutter Profile
+Base image plus:
+- Rust stable (via rustup)
+- `python3-dev` and `maturin`
+- Flutter SDK (stable)
+- Flet CLI
+
+### Flet Profile
+Base image plus:
+- Flet CLI
+
 ## Architecture Support
 
 All images are built for:
@@ -200,7 +223,7 @@ All images are built for:
 
 ```bash
 # Build a specific profile
-docker build -f profiles/node/Dockerfile -t baseimages/node .
+docker build -f profiles/base/Dockerfile -t baseimages/base .
 
 # Build with buildx for multi-arch
 docker buildx build -f profiles/rust/Dockerfile \

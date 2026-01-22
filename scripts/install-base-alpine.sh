@@ -58,6 +58,17 @@ apk add --no-cache \
     py3-pip \
     py3-virtualenv
 
+# Install Node.js LTS and common package managers
+apk add --no-cache \
+    nodejs \
+    npm
+npm install -g pnpm yarn
+
+# Install Bun
+curl -fsSL https://bun.sh/install | bash
+cp /root/.bun/bin/bun /usr/local/bin/bun
+cp /root/.bun/bin/bunx /usr/local/bin/bunx
+
 # Install pipx if not available
 pip3 install --break-system-packages --upgrade pipx
 

@@ -7,7 +7,7 @@ on:
     paths:
       - 'profiles/**'
       - 'scripts/**'
-      - '.github/workflows/build-publish.yaml'
+      - '.github/workflows/release-ubuntu.yaml'
   workflow_dispatch:
     inputs:
       profile:
@@ -18,18 +18,20 @@ on:
         options:
           - ''
           - base
-          - node
           - rust
           - ruby
           - python
           - go
-          - node-rust
           - ci-full
           - dotnet
           - cpp
           - java
-          - node-dotnet
           - db-clients
+          - bun-ubuntu
+          - rust-uv
+          - flutter
+          - rust-uv-flutter
+          - flet
 
 env:
   REGISTRY: ghcr.io
@@ -45,18 +47,84 @@ jobs:
       - name: Set build matrix
         id: set-matrix
         run: |
-          if [[ "${{ github.event.inputs.profile }}" != "" ]]; then
+          if [[ "${{ github.event.inputs.profile }}" != "" && "${{ github.event.inputs.profile }}" != "base" ]]; then
             echo 'matrix={"profile":["${{ github.event.inputs.profile }}"]}' >> $GITHUB_OUTPUT
           else
-            echo 'matrix={"profile":["base","node","rust","ruby","python","go","node-rust","ci-full","dotnet","cpp","java","node-dotnet","db-clients"]}' >> $GITHUB_OUTPUT
+            echo 'matrix={"profile":["rust","ruby","python","go","ci-full","dotnet","cpp","java","db-clients","bun-ubuntu","rust-uv","flutter","rust-uv-flutter","flet"]}' >> $GITHUB_OUTPUT
           fi
 
-  build:
-    needs: prepare
+  build_base:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate date tag
+        id: date
+        run: echo "tag=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_BASE }}/base
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.date.outputs.tag }}
+            type=sha,prefix=
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: profiles/base/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE_BASE }}/base:latest
+          artifact-name: sbom-base.spdx.json
+          output-file: ./sbom-base.spdx.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-base
+          path: ./sbom-base.spdx.json
+
+  build_variants:
+    needs:
+      - prepare
+      - build_base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    if: ${{ github.event.inputs.profile != 'base' }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
@@ -119,7 +187,9 @@ jobs:
           path: ./sbom-${{ matrix.profile }}.spdx.json
 
   summary:
-    needs: build
+    needs:
+      - build_base
+      - build_variants
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -129,19 +199,21 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Profile | Image | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| base | \`ghcr.io/zachhandley/baseimages/base\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| node | \`ghcr.io/zachhandley/baseimages/node\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| rust | \`ghcr.io/zachhandley/baseimages/rust\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| ruby | \`ghcr.io/zachhandley/baseimages/ruby\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| python | \`ghcr.io/zachhandley/baseimages/python\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| go | \`ghcr.io/zachhandley/baseimages/go\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| node-rust | \`ghcr.io/zachhandley/baseimages/node-rust\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| ci-full | \`ghcr.io/zachhandley/baseimages/ci-full\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| dotnet | \`ghcr.io/zachhandley/baseimages/dotnet\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| cpp | \`ghcr.io/zachhandley/baseimages/cpp\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| java | \`ghcr.io/zachhandley/baseimages/java\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| node-dotnet | \`ghcr.io/zachhandley/baseimages/node-dotnet\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| db-clients | \`ghcr.io/zachhandley/baseimages/db-clients\` | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| base | \`ghcr.io/zachhandley/baseimages/base\` | ${{ needs.build_base.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| rust | \`ghcr.io/zachhandley/baseimages/rust\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ruby | \`ghcr.io/zachhandley/baseimages/ruby\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| python | \`ghcr.io/zachhandley/baseimages/python\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| go | \`ghcr.io/zachhandley/baseimages/go\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ci-full | \`ghcr.io/zachhandley/baseimages/ci-full\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| dotnet | \`ghcr.io/zachhandley/baseimages/dotnet\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| cpp | \`ghcr.io/zachhandley/baseimages/cpp\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| java | \`ghcr.io/zachhandley/baseimages/java\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| db-clients | \`ghcr.io/zachhandley/baseimages/db-clients\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| bun-ubuntu | \`ghcr.io/zachhandley/baseimages/bun-ubuntu\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| rust-uv | \`ghcr.io/zachhandley/baseimages/rust-uv\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| flutter | \`ghcr.io/zachhandley/baseimages/flutter\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| rust-uv-flutter | \`ghcr.io/zachhandley/baseimages/rust-uv-flutter\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| flet | \`ghcr.io/zachhandley/baseimages/flet\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Usage" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -150,5 +222,5 @@ jobs:
           echo "  build:" >> $GITHUB_STEP_SUMMARY
           echo "    runs-on: ubuntu-latest" >> $GITHUB_STEP_SUMMARY
           echo "    container:" >> $GITHUB_STEP_SUMMARY
-          echo "      image: ghcr.io/zachhandley/baseimages/node-rust:latest" >> $GITHUB_STEP_SUMMARY
+          echo "      image: ghcr.io/zachhandley/baseimages/ci-full:latest" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
