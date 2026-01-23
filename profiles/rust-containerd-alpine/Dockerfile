@@ -33,10 +33,11 @@ RUN apk add --no-cache \
     iproute2 \
     fuse-overlayfs
 
-# Create containerd config with native snapshotter (overlayfs doesn't work in nested containers)
+# Create containerd config for nested container operation (use native snapshotter)
 RUN mkdir -p /etc/containerd && \
     containerd config default > /etc/containerd/config.toml && \
-    sed -i 's/snapshotter = "overlayfs"/snapshotter = "native"/' /etc/containerd/config.toml
+    sed -i 's/snapshotter = "overlayfs"/snapshotter = "native"/g' /etc/containerd/config.toml && \
+    sed -i 's/\[plugins\."io\.containerd\.snapshotter\.v1\.overlayfs"\]/[plugins."io.containerd.snapshotter.v1.native"]/g' /etc/containerd/config.toml
 
 # Create required directories
 RUN mkdir -p /run/containerd /var/lib/containerd

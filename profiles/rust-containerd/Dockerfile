@@ -42,10 +42,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create containerd config with native snapshotter (overlayfs doesn't work in nested containers)
+# Create containerd config for nested container operation (use native snapshotter)
 RUN mkdir -p /etc/containerd && \
     containerd config default > /etc/containerd/config.toml && \
-    sed -i 's/snapshotter = "overlayfs"/snapshotter = "native"/' /etc/containerd/config.toml
+    sed -i 's/snapshotter = "overlayfs"/snapshotter = "native"/g' /etc/containerd/config.toml && \
+    sed -i 's/\[plugins\."io\.containerd\.snapshotter\.v1\.overlayfs"\]/[plugins."io.containerd.snapshotter.v1.native"]/g' /etc/containerd/config.toml
 
 # Create required directories
 RUN mkdir -p /run/containerd /var/lib/containerd
