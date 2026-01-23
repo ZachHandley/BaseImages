@@ -19,6 +19,7 @@ on:
           - ''
           - base
           - rust
+          - rust-containerd
           - ruby
           - python
           - go
@@ -53,7 +54,7 @@ jobs:
           if [[ "${{ github.event.inputs.profile }}" != "" && "${{ github.event.inputs.profile }}" != "base" ]]; then
             echo 'matrix={"profile":["${{ github.event.inputs.profile }}"]}' >> $GITHUB_OUTPUT
           else
-            echo 'matrix={"profile":["rust","ruby","python","go","ci-full","dotnet","cpp","java","db-clients","bun-ubuntu","rust-uv","flutter","rust-uv-flutter"]}' >> $GITHUB_OUTPUT
+            echo 'matrix={"profile":["rust","rust-containerd","ruby","python","go","ci-full","dotnet","cpp","java","db-clients","bun-ubuntu","rust-uv","flutter","rust-uv-flutter"]}' >> $GITHUB_OUTPUT
           fi
 
   build_base:
@@ -204,6 +205,7 @@ jobs:
           echo "|---------|-------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| base | \`ghcr.io/zachhandley/baseimages/base\` | ${{ needs.build_base.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| rust | \`ghcr.io/zachhandley/baseimages/rust\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| rust-containerd | \`ghcr.io/zachhandley/baseimages/rust-containerd\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| ruby | \`ghcr.io/zachhandley/baseimages/ruby\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| python | \`ghcr.io/zachhandley/baseimages/python\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| go | \`ghcr.io/zachhandley/baseimages/go\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
