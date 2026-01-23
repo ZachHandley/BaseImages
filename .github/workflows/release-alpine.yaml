@@ -19,6 +19,7 @@ on:
           - ''
           - alpine
           - rust-alpine
+          - rust-containerd-alpine
           - ruby-alpine
           - python-alpine
           - go-alpine
@@ -45,7 +46,7 @@ jobs:
           if [[ "${{ github.event.inputs.profile }}" != "" && "${{ github.event.inputs.profile }}" != "alpine" ]]; then
             echo 'matrix={"profile":["${{ github.event.inputs.profile }}"]}' >> $GITHUB_OUTPUT
           else
-            echo 'matrix={"profile":["rust-alpine","ruby-alpine","python-alpine","go-alpine","bun-alpine"]}' >> $GITHUB_OUTPUT
+            echo 'matrix={"profile":["rust-alpine","rust-containerd-alpine","ruby-alpine","python-alpine","go-alpine","bun-alpine"]}' >> $GITHUB_OUTPUT
           fi
 
   build_base:
@@ -196,6 +197,7 @@ jobs:
           echo "|---------|-------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| alpine | \`ghcr.io/zachhandley/baseimages/alpine\` | ${{ needs.build_base.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| rust-alpine | \`ghcr.io/zachhandley/baseimages/rust-alpine\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| rust-containerd-alpine | \`ghcr.io/zachhandley/baseimages/rust-containerd-alpine\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| ruby-alpine | \`ghcr.io/zachhandley/baseimages/ruby-alpine\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| python-alpine | \`ghcr.io/zachhandley/baseimages/python-alpine\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| go-alpine | \`ghcr.io/zachhandley/baseimages/go-alpine\` | ${{ needs.build_variants.result }} |" >> $GITHUB_STEP_SUMMARY
