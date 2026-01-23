@@ -42,9 +42,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create default containerd config
+# Create containerd config with native snapshotter (overlayfs doesn't work in nested containers)
 RUN mkdir -p /etc/containerd && \
-    containerd config default > /etc/containerd/config.toml
+    containerd config default > /etc/containerd/config.toml && \
+    sed -i 's/snapshotter = "overlayfs"/snapshotter = "native"/' /etc/containerd/config.toml
 
 # Create required directories
 RUN mkdir -p /run/containerd /var/lib/containerd
